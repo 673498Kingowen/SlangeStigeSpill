@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 
 import snakespill.*;
 
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class spillTest {
@@ -40,7 +41,7 @@ public class spillTest {
         spillImpl game = new spillImpl();
         spiller player = new spiller("Player1");
         game.flyttSpiller(player, 6);
-        assertEquals(14, player.getPosition());
+        assertEquals(7, player.getPosition());
     }
 
     @Test
@@ -54,4 +55,24 @@ public class spillTest {
         game.flyttSpiller(player, 4);
         assertEquals(100, player.getPosition());
     }
+
+    @Test
+    void testTrilleSeksTreGanger() {
+        TestTerning testDice = new TestTerning();
+        testDice.addRoll(6);
+        testDice.addRoll(6);
+        testDice.addRoll(6);
+
+        spillImpl game = new spillImpl(testDice);
+        spiller player = new spiller("Player1");
+        game.spillere.add(player);
+        player.setKanStarte(true);
+        game.play(true);
+        assertEquals(0, player.getPosition());
+        assertFalse(player.kanStarte());
+    }
+
+
+
+
 }

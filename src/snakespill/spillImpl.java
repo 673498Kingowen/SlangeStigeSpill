@@ -6,9 +6,9 @@ import java.util.Scanner;
 
 public class spillImpl {
     private static final int BOARD_SIZE = 100;
-    private final List<spiller> spillere;
+    public final List<spiller> spillere;
     private final Board board;
-    private final terning dice;
+    public terning dice;
 
     public spillImpl() {
         this.spillere = new ArrayList<>();
@@ -16,10 +16,17 @@ public class spillImpl {
         this.dice = new terning();
     }
 
+    // Testing av testTrilleSeksTreGanger()
+    public spillImpl(terning customDice) {
+        this.spillere = new ArrayList<>();
+        this.board = new Board(BOARD_SIZE);
+        this.dice = customDice;
+    }
+
     public void start() {
         System.out.println("Slange og Stigespill!");
         setupPlayers();
-        play();
+        play(true);
     }
 
     private void setupPlayers() {
@@ -37,33 +44,49 @@ public class spillImpl {
         }
     }
 
-    public void play() {
-        boolean Vunnet = false;
-        while (!Vunnet) {
+    // testTrilleSeksTreGanger() med (boolean debug)
+    public void play(boolean debug) {
+        boolean vunnet = false;
+        while (!vunnet) {
             for (spiller spiller : spillere) {
                 System.out.println("\n" + spiller.getName() + " sin tur.");
-                int trill = dice.roll();
-                System.out.println(spiller.getName() + " kastet en " + trill);
-                if (spiller.kanStarte() || trill == 6) {
-                    if (!spiller.kanStarte()) {
-                        spiller.setKanStarte(true);
-                        System.out.println(spiller.getName() + " kan nå starte!");
-                    }
-                    flyttSpiller(spiller, trill);
+                int trill;
+                int sekserTeller = 0;
+                do {
+                    trill = dice.roll();
+                    System.out.println(spiller.getName() + " kastet en " + trill);
                     if (trill == 6) {
-                        System.out.println("Du kastet 6! Kast på nytt.");
-                        trill = dice.roll();
-                        System.out.println(spiller.getName() + " kastet en " + trill);
+                        if (spiller.kanStarte()) {
+                            sekserTeller++;
+                        }
+                        if (sekserTeller == 3) {
+                            System.out.println(spiller.getName() + " kastet 6 tre ganger på rad! Går tilbake til start.");
+                            spiller.setPosition(0);
+                            spiller.setKanStarte(false);
+                            if (debug) return;
+                            break;
+                        }
+                        if (!spiller.kanStarte()) {
+                            spiller.setKanStarte(true);
+                            System.out.println(spiller.getName() + " kan nå starte! Kast på nytt for å bevege deg.");
+                            continue;
+                        }
                         flyttSpiller(spiller, trill);
+                    } else {
+                        sekserTeller = 0;
+                        if (spiller.kanStarte()) {
+                            flyttSpiller(spiller, trill);
+                        } else {
+                            System.out.println(spiller.getName() + " må kaste en 6 for å starte.");
+                        }
                     }
                     if (spiller.getPosition() == BOARD_SIZE) {
                         System.out.println(spiller.getName() + " har vunnet spillet!");
-                        Vunnet = true;
+                        vunnet = true;
+                        if (debug) return;
                         break;
                     }
-                } else {
-                    System.out.println(spiller.getName() + " må kaste en 6 for å starte.");
-                }
+                } while (trill == 6);
             }
         }
     }

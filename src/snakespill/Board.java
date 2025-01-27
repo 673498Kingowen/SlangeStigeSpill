@@ -23,16 +23,16 @@ public class Board {
         spill.put(95, 75);
         spill.put(98, 78);
 
+
         // stige
         spill.put(2, 38);
-        spill.put(7, 14);
-        spill.put(8, 31);
-        spill.put(15, 26);
+        spill.put(4, 14);
+        spill.put(21, 42);
         spill.put(28, 84);
         spill.put(36, 44);
         spill.put(51, 67);
         spill.put(71, 91);
-        spill.put(78, 98);
+        spill.put(80, 100);
     }
 
     public int sjekkForSlangeEllerStige(int position) {
